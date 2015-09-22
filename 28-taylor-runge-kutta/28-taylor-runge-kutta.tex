@@ -46,6 +46,18 @@ Taylor Series Methods and Runge-Kutta}
 
 \section{Introduction}
 
+This lecture will cover:
+
+\begin{itemize}
+\item A reminder of the PRKE we learned yesterday
+\item A derivation of Forward Euler for approximating solutions to initial value problems
+\item A way to step through time with Runge-Kutta methods
+\item And application of this to a PRKE simulation
+\item An exploration of the importance of delayed neutrons for reactor control
+\end{itemize}
+
+\section{IVP}
+
 Recall that the initial value problem takes the form:
 \begin{align}
 u'(t) &= f(u(t), t), \mbox{ for } t>t_0
@@ -64,29 +76,31 @@ Runge-Kutta method as well, for higher accuracy.
 %------------------------------------------------------------------------------
 \section{Taylor Series Derivation of Forward Euler}
 
-The simplest method for finding $u(t_n)$ is Forward Euler, which approximates $u(t_n)$. Let's call this approximation, $U^n$. In this notation, Forward Euler is based on replacing $u'(t_n)$ with $(U^{n+1} - U^n)/k$, where $k$ is the width of the timestep.
+The simplest method for finding $u(t_n)$ is Forward Euler, which approximates 
+$u(t_n)$. Let's call this approximation, $U^n$. In this notation, Forward Euler 
+is based on replacing $u'(t_n)$ with $(U^{n+1} - U^n)/\Delta t$, where $\Delta t$ is the width of the timestep.
 The Forward Euler method arises from a Taylor series expansion of $u(t_{n+1})$ 
 about $u(t_n)$:
 
 \begin{align}
-u(t_{n+1}) = u(t_n) + ku'(t_n) + \frac{1}{2}k^2u''(t_n) + \cdots
+u(t_{n+1}) = u(t_n) + \Delta tu'(t_n) + \frac{1}{2}\Delta t^2u''(t_n) + \cdots
 \label{taylor}
 \end{align}
 
-With this, the $O(k^2)$ terms can be dropped to give:
+With this, the $O(\Delta t^2)$ terms can be dropped to give:
 \begin{align}
-u(t_{n+1}) \approx u(t_n) + ku'(t_n) 
+u(t_{n+1}) \approx u(t_n) + \Delta tu'(t_n) 
 \end{align}
 
 And, based on equation \eqref{ivp} we can replace $u'(t_n)$ with 
 $f(u(t_n),t_n)$:
 
 \begin{align}
-\frac{1}{2}k^2u''(t_n) + \cdots\\
-u(t_{n+1}) = u(t_n) + kf(u(t_n),t_n)
+\frac{1}{2}\Delta t^2u''(t_n) + \cdots\\
+u(t_{n+1}) = u(t_n) + \Delta tf(u(t_n),t_n)
 \end{align}
 
-This expression gives a truncation error of order $O(k^2)$. More 
+This expression gives a truncation error of order $O(\Delta t^2)$. More 
 accurate schemes can be derived with a Taylor series expansion by retaining 
 higher order terms in equation \eqref{taylor}. Since we are only given 
 $u'(t_n) = f(u(t_n),t_n)$, however, the computation of such schemes requires 
@@ -102,32 +116,32 @@ Runge-Kutta uses two stages. The first stage is an update using Euler's method,
 approximating $u(t_{n+1/2})$. 
 
 \begin{align}
-U^{n+1/2} = U^n + \frac{1}{2}kf(U^n)\\
+U^{n+1/2} = U^n + \frac{1}{2}\Delta tf(U^n)\\
 \end{align}
 
 The second stage evaluates the function, $f$, at the midpoint to estimate the 
 slope.
 
 \begin{align}
-U^{n+1} = U^n + kf(U^{n+1/2})
+U^{n+1} = U^n + \Delta tf(U^{n+1/2})
 \end{align}
 
 These equations can be combined into a single expression:
 
 \begin{align}
-U^{n+1} = U^n + kf(U^n + \frac{1}{2}kf(U^n))
+U^{n+1} = U^n + \Delta tf(U^n + \frac{1}{2}\Delta tf(U^n))
 \end{align}
 
 This approximation, because it uses two points, like a centered approximation, 
-is order $O(k)$ accurate.
+is order $O(\Delta t)$ accurate.
 
 A generic r-stage Runge-Kutta method can be expressed as:
 \begin{align}
-Y_1 = U^n + k\sum_{j=1}^r a_{1j}f(Y_j, t_n + c_jk)\\
-Y_2 = U^n + k\sum_{j=2}^r a_{2j}f(Y_j, t_n + c_jk)\\
+Y_1 = U^n + \Delta t\sum_{j=1}^r a_{1j}f(Y_j, t_n + c_j\Delta t)\\
+Y_2 = U^n + \Delta t\sum_{j=2}^r a_{2j}f(Y_j, t_n + c_j\Delta t)\\
 \vdots\nonumber\\
-Y_r = U^n + k\sum_{j=r}^r a_{rj}f(Y_j, t_n + c_jk)\\
-U^{n+1} = U^n + k\sum_{j=r}^r a_{rj}f(Y_j, t_n + c_jk)
+Y_r = U^n + \Delta t\sum_{j=r}^r a_{rj}f(Y_j, t_n + c_j\Delta t)\\
+U^{n+1} = U^n + \Delta t\sum_{j=r}^r a_{rj}f(Y_j, t_n + c_j\Delta t)
 \end{align}
 
 
