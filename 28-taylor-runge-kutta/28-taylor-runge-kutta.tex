@@ -56,6 +56,47 @@ This lecture will cover:
 \item An exploration of the importance of delayed neutrons for reactor control
 \end{itemize}
 
+\section{PRKE}
+Point Reactor Kinetics Equations (PRKE).
+
+\begin{align}
+  \frac{dn(t)}{dt} &= \frac{\rho(t)-\beta}{\Lambda}n(t) + \sum_{i=1}^{6}\lambda_iC_i(t)\\
+  \frac{dC_i(t)}{dt} &= \frac{\beta_i}{\Lambda}n(t) - \lambda_i C_i(t)
+  \label{prke}
+  \intertext{where}
+  i&\in[1,6]\nonumber\\
+  n &= \mbox{neutron population}\\
+  \beta &= \mbox{fraction of neutrons that are delayed}\\
+  \lambda_i &= \mbox{effective decay constant of the ith precursor}[\frac{1}{s}]\\
+  C_i(t) &= \mbox{delayed neutron concentration due to the ith precursor}\\
+  \Lambda &= \mbox{effective neutron lifetime}\\
+  &\equiv (v\nu\Sigma_F)^{-1}\nonumber\\
+  \rho(t) &= \mbox{reactivity}\\
+  &\equiv\frac{k(t)-1}{k(t)}\nonumber\\
+         &\equiv\frac{\nu\Sigma_F-\Sigma_a(1+L^2B_g^2)}{\nu\Sigma_F}\nonumber\\
+  \intertext{and}
+  k&\equiv \frac{\nu\Sigma_F/\Sigma_a}{1+L^2B_g^2}.\nonumber
+\end{align}
+
+The PRKEs allow a nuclear engineer to remove the spatial aspects of the
+reactor from consideration to simplify the analysis of this initial value
+problem. In particular, the assumptions that have gone into this set of
+equations include:
+
+\begin{itemize}
+\item there is no external neutron source
+\item One energy group ($\phi(\vec{r},E,t) = \phi(\vec{r},t)$)
+\item Separation of variables ($\phi(\vec{r},t) = S(t)\psi(\vec{r})$)
+\item $\beta_i$ and $\lambda_i$ are constant over the transient
+\item There is no feedback (e.g. flux is low, feedbacks are slow/weak, $\rho(t)$ is known)
+\end{itemize}
+
+%BCs: $n(0) = n_0$ and $C_i(0) = C_{i,0}$ for $i=1,\dots,N$.
+
+\paragraph{Exercise:}
+\emph{What initial conditions need to be defined in order to solve this initial
+value problem (eqn. \eqref{prke}?)}
+
 \section{IVP}
 
 Recall that the initial value problem takes the form:
@@ -156,5 +197,52 @@ To avoid confusion with the multiplication factor, the width of our timestep wil
 \begin{align}
 n(t_{n+1}) = n(t) + \Delta t\left[\frac{\rho(t_n)-\beta}{\Lambda}n(t_n) + \displaystyle\sum^{j=J}_{j=1}\lambda_j\zeta_j\right]\\
 \end{align}
+
+\section{Delayed Neutrons and Reactor Control}
+These delayed neutrons are critical to controlling the reactor.
+To capture the reasons why, we will need the following definitions.
+
+\begin{align}
+\rho &= \mbox{reactivity}\\
+&= \frac{k-1}{k}\\
+k &= \mbox{multiplication factor}\\
+&(k < 1) \rightarrow \mbox{negative reactivity}\\
+&(k > 1) \rightarrow \mbox{positive reactivity}\\
+&(k = 1) \rightarrow \mbox{critical}\\
+\beta &= \mbox{delayed neutron fraction}\\
+&(\rho < \beta) \mbox{ delayed supercriticality}\\
+&(\rho > \beta) \mbox{ prompt supercriticality}\\
+l &= \mbox{mean neutron lifetime}
+\end{align}
+
+\subsection{Units of Reactivity}
+Note that the units of $\rho$ can be confusing.
+
+\input{./rho_units}
+
+\subsection{Thought Experiment}
+If there were no delayed neutrons, then the time constant for power increase
+would be approximately  $l_p$, the prompt neutron lifetime. That isn't the
+case, but if it were, the reactor power would proceed thus:
+
+\begin{align}
+l &= \mbox{mean generation time}\\
+n(t+l) &= n(t) + l\frac{dn}{dt} = k_\infty n(t)
+\intertext{such that}
+\frac{dn}{dt} &= \left(\frac{k-1}{l}\right)n(t)
+\intertext{which gives}
+n(t) &= n_0e^{\frac{(k-1)t}{l}}
+\intertext{characterized by the time constant}
+T &= \mbox{reactor period}\\
+  &= \frac{l}{k-1}
+\end{align}
+
+In a universe without delayed neutrons, the mean neutron lifetime ($l$) would be
+the prompt neutron lifetime ($l_p$).  Noting that the prompt neutron lifetime is about
+$2\times10^{-5}s$, take a moment to think about the implications of this.
+
+\paragraph{Exercise}
+\emph{If a control rod were moved to introduce an excess reactivity of }$0.0005\Delta
+k$\emph{, what would the power be one second later?}
 
 \end{document}
